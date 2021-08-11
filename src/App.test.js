@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import App from './App';
 import { Provider } from 'react-redux';
 import store from './store'
@@ -16,14 +16,15 @@ describe('App', () => {
     expect(errorMessage).toBeInTheDocument();
   });
 
-  it('Clicks on the first option (plain) and succesfully places an order', () => {
+  test('Clicks on the first option (plain) and succesfully places an order', async () => {
     render(<Provider store={store}><App /></Provider>);
     const firstRadio = screen.getByText('Plain', {exact: false});
     fireEvent.click(firstRadio);
     const order = screen.getByText('Save order', { exact: false})
     fireEvent.click(order)
-    const successMessage = screen.getByText('Your order: Plain')
-    expect(successMessage).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByText('Your order: Plain')).toBeInTheDocument()
+    })
   })
 
 });
